@@ -11,7 +11,7 @@ Via HACS:
 
 - Add the following custom repository as an integration:
     - MarcoGos/kleenex_nl_pollenradar
-    - Restart Home Assistant
+- Restart Home Assistant
 - Add the integration to Home Assistant
 
 ## Setup
