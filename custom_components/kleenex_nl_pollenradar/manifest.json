@@ -3,7 +3,7 @@
     "name": "Kleenex NL pollenradar",
     "version": "0.0.1",
     "config_flow": true,
-    "documentation": "https://www.home-assistant.io/integrations/kleenex_nl_pollen",
+    "documentation": "https://github.com/MarcoGos/kleenex_nl_pollenradar",
     "requirements": [
       "beautifulsoup4==4.10.0"
     ],
