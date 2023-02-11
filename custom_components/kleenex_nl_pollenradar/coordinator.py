@@ -6,7 +6,6 @@ from .api import PollenApi
 from .const import (
     DEFAULT_SYNC_INTERVAL,
     DOMAIN,
-    # PLATFORMS,
 )
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)

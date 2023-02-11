@@ -1,6 +1,5 @@
 import logging
 
-# from decimal import Decimal
 from collections.abc import Mapping
 from typing import Any
 
@@ -10,20 +9,10 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.entity import EntityCategory
 
-# from homeassistant.const import (
-#     PERCENTAGE,
-#     TIME_DAYS,
-#     VOLUME_LITERS,
-#     MASS_KILOGRAMS,
-# )
 from .coordinator import PollenDataUpdateCoordinator
-
 from .const import DOMAIN, NAME, VERSION
 
-# from .entity import BWTPerlaEntity
-
 _LOGGER: logging.Logger = logging.getLogger(__package__)
-
 
 async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_devices: AddEntitiesCallback

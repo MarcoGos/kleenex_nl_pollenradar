@@ -87,7 +87,6 @@ class PollenApi:
         soup = BeautifulSoup(self._raw_data, "html.parser")
         _LOGGER.debug(f"Just loaded into BeautifulSoup")
         results = soup.find_all("button", class_="day-link")
-        # _LOGGER.info(f"Found results {results}")
         for day in results:
             day_no = int(day.select("span.day-number")[0].contents[0])
             pollen_date = self.__determine_pollen_date(day_no)

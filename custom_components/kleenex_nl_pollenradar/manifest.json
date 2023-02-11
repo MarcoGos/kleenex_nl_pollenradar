@@ -12,7 +12,7 @@
     "homekit": {},
     "dependencies": [],
     "codeowners": [
-      "@marcogos"
+      "@MarcoGos"
     ],
     "iot_class": "cloud_polling"
   }
