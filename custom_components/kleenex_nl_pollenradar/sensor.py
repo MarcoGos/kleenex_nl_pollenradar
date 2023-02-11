@@ -136,5 +136,9 @@ class KleenexSensor(CoordinatorEntity[PollenDataUpdateCoordinator]):
             data["value_in_2_days"] = int(self.coordinator.data[2][self.key]["pollen"])
             data["value_in_3_days"] = int(self.coordinator.data[3][self.key]["pollen"])
             data["value_in_4_days"] = int(self.coordinator.data[4][self.key]["pollen"])
+            data["level_tomorrow"] = self.coordinator.data[1][self.key]["level"]
+            data["level_in_2_days"] = self.coordinator.data[2][self.key]["level"]
+            data["level_in_3_days"] = self.coordinator.data[3][self.key]["level"]
+            data["level_in_4_days"] = self.coordinator.data[4][self.key]["level"]
             # data["last_updated"] = self.coordinator.last_updated
         return data
