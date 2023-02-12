@@ -10,7 +10,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.entity import EntityCategory
 
 from .coordinator import PollenDataUpdateCoordinator
-from .const import DOMAIN, NAME, VERSION
+from .const import DOMAIN, NAME
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -18,12 +18,6 @@ async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_devices: AddEntitiesCallback
 ) -> None:
     coordinator: PollenDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
-
-    # [{'day': 10, 'datetime': '2023-03-10T00:00:00+00:00', 'trees': {'pollen': '195', 'level': 'moderate', 'unit_of_measure': 'ppm'}, 'weeds': {'pollen': '0', 'level': 'low', 'unit_of_measure': 'ppm'}, 'grass': {'pollen': '0', 'level': 'low', 'unit_of_measure': 'ppm'}},
-    #  {'day': 11, 'datetime': '2023-02-11T00:00:00+00:00', 'trees': {'pollen': '43', 'level': 'low', 'unit_of_measure': 'ppm'}, 'weeds': {'pollen': '0', 'level': 'low', 'unit_of_measure': 'ppm'}, 'grass': {'pollen': '0', 'level': 'low', 'unit_of_measure': 'ppm'}},
-    #  {'day': 12, 'datetime': '2023-02-12T00:00:00+00:00', 'trees': {'pollen': '39', 'level': 'low', 'unit_of_measure': 'ppm'}, 'weeds': {'pollen': '0', 'level': 'low', 'unit_of_measure': 'ppm'}, 'grass': {'pollen': '0', 'level': 'low', 'unit_of_measure': 'ppm'}},
-    #  {'day': 13, 'datetime': '2023-02-13T00:00:00+00:00', 'trees': {'pollen': '120', 'level': 'moderate', 'unit_of_measure': 'ppm'}, 'weeds': {'pollen': '0', 'level': 'low', 'unit_of_measure': 'ppm'}, 'grass': {'pollen': '0', 'level': 'low', 'unit_of_measure': 'ppm'}},
-    #  {'day': 14, 'datetime': '2023-02-14T00:00:00+00:00', 'trees': {'pollen': '330', 'level': 'high', 'unit_of_measure': 'ppm'}, 'weeds': {'pollen': '0', 'level': 'low', 'unit_of_measure': 'ppm'}, 'grass': {'pollen': '0', 'level': 'low', 'unit_of_measure': 'ppm'}}]
 
     INSTRUMENTS = [
         ("trees", "Tree Pollen", "trees", "mdi:tree", None, None),
@@ -114,7 +108,6 @@ class KleenexSensor(CoordinatorEntity[PollenDataUpdateCoordinator]):
         return {
             "identifiers": {(DOMAIN, self.coordinator.api.position)},
             "name": f"{NAME} ({self._entry.data['name']})",
-            "model": VERSION,
             "manufacturer": NAME,
         }
 
@@ -140,5 +133,5 @@ class KleenexSensor(CoordinatorEntity[PollenDataUpdateCoordinator]):
             data["level_in_2_days"] = self.coordinator.data[2][self.key]["level"]
             data["level_in_3_days"] = self.coordinator.data[3][self.key]["level"]
             data["level_in_4_days"] = self.coordinator.data[4][self.key]["level"]
-            # data["last_updated"] = self.coordinator.last_updated
+            data["details"] = self.coordinator.data[0][self.key]["details"]
         return data

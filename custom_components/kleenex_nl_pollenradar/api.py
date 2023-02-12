@@ -29,6 +29,7 @@ class PollenApi:
     _raw_data: str = ""
     _pollen: list[dict[str, Any]] = []
     _pollen_types = ("trees", "weeds", "grass")
+    _pollen_detail_types: dict[str, str] = {"trees": "tree", "weeds": "weed", "grass": "grass"}
 
     def __init__(
         self,
@@ -104,7 +105,18 @@ class PollenApi:
                     "pollen": pollen_count,
                     "level": pollen_level,
                     "unit_of_measure": unit_of_measure.lower(),
+                    "details": [],
                 }
+                pollen_detail_type = self._pollen_detail_types[pollen_type]
+                pollen_details = day.get(f"data-{pollen_detail_type}-detail").split("|")
+                for item in pollen_details:
+                    sub_items = item.split(",")
+                    pollen_detail = {
+                        "name": sub_items[0],
+                        "value": int(sub_items[1]),
+                        "level": sub_items[2],
+                    }
+                    pollen[pollen_type]["details"].append(pollen_detail)
             self._pollen.append(pollen)
             _LOGGER.debug(f"Day {day_no} with info {pollen}")
         _LOGGER.debug(f"Pollen info {self._pollen}")
