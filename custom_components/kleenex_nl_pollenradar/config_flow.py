@@ -11,28 +11,31 @@ from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import config_validation
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.const import CONF_LATITUDE, CONF_LONGITUDE
 
 from .const import DOMAIN
+from .api import PollenApi
 
 _LOGGER = logging.getLogger(__name__)
 
 # TODO adjust the data schema to the data that you need
 
 
-class PlaceholderHub:
+class PlaceholderHub():
     """Placeholder class to make tests pass.
 
     TODO Remove this placeholder class and replace with things from your PyPI package.
     """
 
-    def __init__(self, host: str) -> None:
+    def __init__(self) -> None:
         """Initialize."""
-        self.host = host
 
-    async def authenticate(self, username: str, password: str) -> bool:
-        """Test if we can authenticate with the host."""
-        return True
+    async def authenticate(self, session, latitude: float, longitude: float) -> bool:
+        """Test if we can find data for the given position."""
+        _LOGGER.info(f"authenticate called with {latitude} {longitude}")
+        api = PollenApi(session=session, latitude=latitude, longitude=longitude)
+        return not not await api.async_get_data()
 
 
 async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str, Any]:
@@ -40,23 +43,10 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
 
     Data has the keys from STEP_USER_DATA_SCHEMA with values provided by the user.
     """
-    # TODO validate the data can be used to set up a connection.
-
-    # If your PyPI package is not built with async, pass your methods
-    # to the executor:
-    # await hass.async_add_executor_job(
-    #     your_validate_func, data["username"], data["password"]
-    # )
-
-    # hub = PlaceholderHub(data["host"])
-
-    # if not await hub.authenticate(data["username"], data["password"]):
-    #     raise InvalidAuth
-
-    # If you cannot connect:
-    # throw CannotConnect
-    # If the authentication is wrong:
-    # InvalidAuth
+    session = async_get_clientsession(hass)
+    hub = PlaceholderHub()
+    if not await hub.authenticate(session, data["latitude"], data["longitude"]):
+        raise InvalidAuth
 
     # Return info that you want to store in the config entry.
     return { "title": data['name'] }

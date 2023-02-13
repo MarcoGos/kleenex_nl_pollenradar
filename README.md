@@ -1,5 +1,4 @@
 ![Version](https://img.shields.io/github/v/release/MarcoGos/kleenex_nl_pollenradar?include_prereleases)
-![Downloads](https://img.shields.io/github/downloads/MarcoGos/kleenex_nl_pollenradar/total)
 
 # Kleenex NL pollenradar
 

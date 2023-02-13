@@ -10,7 +10,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.entity import EntityCategory
 
 from .coordinator import PollenDataUpdateCoordinator
-from .const import DOMAIN, NAME
+from .const import DOMAIN, NAME, MODEL, MANUFACTURER
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -108,7 +108,8 @@ class KleenexSensor(CoordinatorEntity[PollenDataUpdateCoordinator]):
         return {
             "identifiers": {(DOMAIN, self.coordinator.api.position)},
             "name": f"{NAME} ({self._entry.data['name']})",
-            "manufacturer": NAME,
+            "model": MODEL,
+            "manufacturer": MANUFACTURER,
         }
 
     @property
@@ -121,17 +122,25 @@ class KleenexSensor(CoordinatorEntity[PollenDataUpdateCoordinator]):
 
     @property
     def extra_state_attributes(self) -> Mapping[str, Any] | None:
+        MAPPING: dict[str, dict[str, Any]] = {
+            "value_tomorrow":  { "offset": 1, "key": "pollen", "func": int},
+            "value_in_2_days": { "offset": 2, "key": "pollen", "func": int},
+            "value_in_3_days": { "offset": 3, "key": "pollen", "func": int},
+            "value_in_4_days": { "offset": 4, "key": "pollen", "func": int},
+            "level":           { "offset": 0, "key": "level"},
+            "level_tomorrow":  { "offset": 1, "key": "level"},
+            "level_in_2_days": { "offset": 2, "key": "level"},
+            "level_in_3_days": { "offset": 3, "key": "level"},
+            "level_in_4_days": { "offset": 4, "key": "level"},
+            "details":         { "offset": 0, "key": "details"}
+        }
+
         data: dict[str, Any] = {}
         if self.key != "":
-            data["level"] = self.coordinator.data[0][self.key]["level"]
+            for attr in MAPPING:
+                attr_info = MAPPING[attr]
+                data[attr] = self.coordinator.data[attr_info.get("offset")][self.key][attr_info.get("key")]
+                if 'func' in attr_info:
+                    data[attr] = attr_info["func"](data[attr])
             data["date"] = self.coordinator.data[0]["date"]
-            data["value_tomorrow"] = int(self.coordinator.data[1][self.key]["pollen"])
-            data["value_in_2_days"] = int(self.coordinator.data[2][self.key]["pollen"])
-            data["value_in_3_days"] = int(self.coordinator.data[3][self.key]["pollen"])
-            data["value_in_4_days"] = int(self.coordinator.data[4][self.key]["pollen"])
-            data["level_tomorrow"] = self.coordinator.data[1][self.key]["level"]
-            data["level_in_2_days"] = self.coordinator.data[2][self.key]["level"]
-            data["level_in_3_days"] = self.coordinator.data[3][self.key]["level"]
-            data["level_in_4_days"] = self.coordinator.data[4][self.key]["level"]
-            data["details"] = self.coordinator.data[0][self.key]["details"]
         return data

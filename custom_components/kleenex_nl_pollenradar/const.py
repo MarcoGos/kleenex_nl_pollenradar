@@ -2,6 +2,8 @@
 
 NAME = "Kleenex NL pollenradar"
 DOMAIN = "kleenex_nl_pollenradar"
+MANUFACTURER = "Kleenex"
+MODEL = "Pollenradar"
 
 # Platforms
 SENSOR = "sensor"
