@@ -23,7 +23,7 @@ class PollenApi:
         "https://www.kleenex.nl/api/sitecore/Pollen/GetPollenContent"
     )
     _headers: dict[str, str] = {
-        "User-Agent": "Home Assistant (kleenex_nl_pollen)",
+        "User-Agent": "Home Assistant (kleenex_nl_pollenradar)",
         "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
     }
     _raw_data: str = ""
