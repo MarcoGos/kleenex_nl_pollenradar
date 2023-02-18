@@ -19,13 +19,13 @@ During the setup of the integration a name, latitude and longitude needs to be p
 
 ## What to expect
 
-The following sensor will be registered:
+The following sensors will be registered:
 
 - Tree Pollen
 - Grass Pollen
 - Weed Pollen
 
-Each sensor has additional attributes for value and level tomorrow, in 2, 3 and 4 days.
+Each sensor has additional attributes for the forecast for the upcoming 4 days.
 
 The sensor information is updated every hour although the values on the Kleenex pollenradar website are updated every 3 hours.
 

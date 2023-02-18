@@ -122,25 +122,30 @@ class KleenexSensor(CoordinatorEntity[PollenDataUpdateCoordinator]):
 
     @property
     def extra_state_attributes(self) -> Mapping[str, Any] | None:
-        MAPPING: dict[str, dict[str, Any]] = {
-            "value_tomorrow":  { "offset": 1, "key": "pollen", "func": int},
-            "value_in_2_days": { "offset": 2, "key": "pollen", "func": int},
-            "value_in_3_days": { "offset": 3, "key": "pollen", "func": int},
-            "value_in_4_days": { "offset": 4, "key": "pollen", "func": int},
-            "level":           { "offset": 0, "key": "level"},
-            "level_tomorrow":  { "offset": 1, "key": "level"},
-            "level_in_2_days": { "offset": 2, "key": "level"},
-            "level_in_3_days": { "offset": 3, "key": "level"},
-            "level_in_4_days": { "offset": 4, "key": "level"},
-            "details":         { "offset": 0, "key": "details"}
+        FORECASTS: dict[str, dict[str, int]] = {
+            "tomorrow":  { "offset": 1 },
+            "in_2_days": { "offset": 2 },
+            "in_3_days": { "offset": 3 },
+            "in_4_days": { "offset": 4 }
+        }
+        MAPPINGS: dict[str, dict[str, Any]] = {
+            "value":   { "data": "pollen", "func": int},
+            "level":   { "data": "level"},
+            "details": { "data": "details"}
         }
 
         data: dict[str, Any] = {}
-        if self.key != "":
-            for attr in MAPPING:
-                attr_info = MAPPING[attr]
-                data[attr] = self.coordinator.data[attr_info.get("offset")][self.key][attr_info.get("key")]
-                if 'func' in attr_info:
-                    data[attr] = attr_info["func"](data[attr])
-            data["date"] = self.coordinator.data[0]["date"]
+        if self.key != "":  # trees, weeds, grass
+            for forecast_key in FORECASTS:
+                offset = FORECASTS[forecast_key]['offset']
+                data[forecast_key] = {}
+                data[forecast_key]["date"] = self.coordinator.data[offset]['date']
+                for mapping_key in MAPPINGS:
+                    mapping = MAPPINGS[mapping_key]
+                    data[forecast_key][mapping_key] = self.coordinator.data[offset][self.key][mapping.get('data')]
+                    if 'func' in mapping:
+                        data[forecast_key][mapping_key] = mapping["func"](data[forecast_key][mapping_key])
+
+            data['level'] = self.coordinator.data[0][self.key]['level']
+            data['date'] = self.coordinator.data[0]['date']
         return data
