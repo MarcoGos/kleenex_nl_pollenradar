@@ -122,30 +122,26 @@ class KleenexSensor(CoordinatorEntity[PollenDataUpdateCoordinator]):
 
     @property
     def extra_state_attributes(self) -> Mapping[str, Any] | None:
-        FORECASTS: dict[str, dict[str, int]] = {
-            "tomorrow":  { "offset": 1 },
-            "in_2_days": { "offset": 2 },
-            "in_3_days": { "offset": 3 },
-            "in_4_days": { "offset": 4 }
-        }
         MAPPINGS: dict[str, dict[str, Any]] = {
-            "value":   { "data": "pollen", "func": int},
-            "level":   { "data": "level"},
-            "details": { "data": "details"}
+            "value":   { "data": "pollen", "func": int },
+            "level":   { "data": "level" },
+            "details": { "data": "details" }
         }
-
-        data: dict[str, Any] = {}
+        data: dict[str, Any] = {
+            "forecast": []
+        }
         if self.key != "":  # trees, weeds, grass
-            for forecast_key in FORECASTS:
-                offset = FORECASTS[forecast_key]['offset']
-                data[forecast_key] = {}
-                data[forecast_key]["date"] = self.coordinator.data[offset]['date']
+            for offset in range(1, 4):
+                forecast_entry: dict[str, Any] = {}
+                forecast_entry["date"] = self.coordinator.data[offset]['date']
                 for mapping_key in MAPPINGS:
                     mapping = MAPPINGS[mapping_key]
-                    data[forecast_key][mapping_key] = self.coordinator.data[offset][self.key][mapping.get('data')]
+                    forecast_entry[mapping_key] = self.coordinator.data[offset][self.key][mapping.get('data')]
                     if 'func' in mapping:
-                        data[forecast_key][mapping_key] = mapping["func"](data[forecast_key][mapping_key])
+                        forecast_entry[mapping_key] = mapping["func"](forecast_entry[mapping_key])
+                data["forecast"].append(forecast_entry)
 
-            data['level'] = self.coordinator.data[0][self.key]['level']
-            data['date'] = self.coordinator.data[0]['date']
+            data["current_date"] = self.coordinator.data[0]["date"]
+            data["current_level"] = self.coordinator.data[0][self.key]["level"]
+            data["current_details"] = self.coordinator.data[0][self.key]["details"]
         return data
