@@ -127,10 +127,13 @@ class KleenexSensor(CoordinatorEntity[PollenDataUpdateCoordinator]):
             "level":   { "data": "level" },
             "details": { "data": "details" }
         }
-        data: dict[str, Any] = {
-            "forecast": []
-        }
+        data: dict[str, Any] = {}
         if self.key != "":  # trees, weeds, grass
+            data["current"] = {}
+            data["current"]["date"] = self.coordinator.data[0]["date"]
+            data["current"]["level"] = self.coordinator.data[0][self.key]["level"]
+            data["current"]["details"] = self.coordinator.data[0][self.key]["details"]
+            data["forecast"] = []
             for offset in range(1, 4):
                 forecast_entry: dict[str, Any] = {}
                 forecast_entry["date"] = self.coordinator.data[offset]['date']
@@ -140,8 +143,4 @@ class KleenexSensor(CoordinatorEntity[PollenDataUpdateCoordinator]):
                     if 'func' in mapping:
                         forecast_entry[mapping_key] = mapping["func"](forecast_entry[mapping_key])
                 data["forecast"].append(forecast_entry)
-
-            data["current_date"] = self.coordinator.data[0]["date"]
-            data["current_level"] = self.coordinator.data[0][self.key]["level"]
-            data["current_details"] = self.coordinator.data[0][self.key]["details"]
         return data
