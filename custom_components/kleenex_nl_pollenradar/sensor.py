@@ -1,7 +1,7 @@
 import logging
 
 from collections.abc import Mapping
-from typing import Any
+from typing import Any, List
 
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.config_entries import ConfigEntry
@@ -68,8 +68,8 @@ class KleenexSensor(CoordinatorEntity[PollenDataUpdateCoordinator]):
         self.key = key
         self._icon = icon
         self._device_class: str | None = device_class
-        self._entry = entry
-        self._attr_entity_category = entity_category
+        self._entry: ConfigEntry = entry
+        self._attr_entity_category: ConfigEntry = entity_category
 
     @property
     def state(self):
@@ -104,7 +104,7 @@ class KleenexSensor(CoordinatorEntity[PollenDataUpdateCoordinator]):
         return f"{DOMAIN}-{self._id}-{self._entry.data['name']}"
 
     @property
-    def device_info(self):
+    def device_info(self) -> dict[str, Any]:
         return {
             "identifiers": {(DOMAIN, self.coordinator.api.position)},
             "name": f"{NAME} ({self._entry.data['name']})",
@@ -127,14 +127,15 @@ class KleenexSensor(CoordinatorEntity[PollenDataUpdateCoordinator]):
             "level":   { "data": "level" },
             "details": { "data": "details" }
         }
-        data: dict[str, Any] = {}
+        data: dict[str, dict[str, Any] | list[Any]] = {}
         if self.key != "":  # trees, weeds, grass
-            data["current"] = {}
-            data["current"]["date"] = self.coordinator.data[0]["date"]
-            data["current"]["level"] = self.coordinator.data[0][self.key]["level"]
-            data["current"]["details"] = self.coordinator.data[0][self.key]["details"]
+            data["current"] = {
+                "date": self.coordinator.data[0]["date"],
+                "level": self.coordinator.data[0][self.key]["level"],
+                "details": self.coordinator.data[0][self.key]["details"]
+            }
             data["forecast"] = []
-            for offset in range(1, 4):
+            for offset in range(1, 5):
                 forecast_entry: dict[str, Any] = {}
                 forecast_entry["date"] = self.coordinator.data[offset]['date']
                 for mapping_key in MAPPINGS:
