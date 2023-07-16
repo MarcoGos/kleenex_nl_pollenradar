@@ -1,5 +1,9 @@
 ![Version](https://img.shields.io/github/v/release/MarcoGos/kleenex_nl_pollenradar?include_prereleases)
 
+# DEPRECATED
+
+This integration is deprecated and replaced by the Kleenex pollenradar https://github.com/MarcoGos/kleenex_pollenradar.
+
 # Kleenex NL pollenradar
 
 This is a custom integration of the Kleenex NL pollenradar. It will provide information about pollen counts and levels for trees, grass and weeds. Information will only be available for positions in the Netherlands.
